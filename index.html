@@ -1,453 +1,277 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dis oui 💌</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --pink-light: #ffe4ec;
-    --pink-soft: #ffc2d6;
-    --pink-mid: #ff8fab;
-    --pink-strong: #ff5c8a;
-    --cream: #fff5f7;
-    --text-dark: #5a3d47;
-    --green-yes: #6fcf97;
-    --green-yes-dark: #4caf7d;
-  }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cascade de Bisous</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: linear-gradient(135deg, #1a0510, #3a0b22);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            
+            /* Correction spéciale iOS Safari (Barre de navigation) */
+            height: 100vh;
+            height: 100dvh;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+        }
 
-  * {
-    box-sizing: border-box;
-  }
+        #ui-container {
+            text-align: center;
+            z-index: 9999;
+        }
 
-  html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    width: 100%;
-    overflow-x: hidden;
-  }
+        button {
+            -webkit-appearance: none;
+            appearance: none;
+            padding: 20px 40px;
+            font-size: 22px;
+            font-weight: bold;
+            border-radius: 50px;
+            background-color: #ff3366;
+            color: white;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(255, 51, 102, 0.6);
+            animation: pulse 2s infinite;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-  body {
-    font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg, var(--cream) 0%, var(--pink-light) 50%, var(--pink-soft) 100%);
-    color: var(--text-dark);
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-  }
+        button:active {
+            transform: scale(0.95);
+            background-color: #ff1a53;
+        }
 
-  /* ---------- Floating hearts background ---------- */
-  .hearts-bg {
-    position: fixed;
-    inset: 0;
-    overflow: hidden;
-    pointer-events: none;
-    z-index: 0;
-  }
+        .word-drop {
+            position: absolute;
+            top: -50px;
+            white-space: nowrap;
+            font-weight: bold;
+            pointer-events: none;
+            animation: waterfall linear forwards;
+            text-shadow: 0px 0px 8px rgba(255, 255, 255, 0.5);
+            z-index: 10;
+        }
 
-  .heart {
-    position: absolute;
-    bottom: -10%;
-    color: var(--pink-mid);
-    opacity: 0.55;
-    animation-name: floatUp;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
-    user-select: none;
-  }
+        @keyframes waterfall {
+            0% { transform: translateY(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(115vh); opacity: 0; }
+        }
 
-  @keyframes floatUp {
-    0% {
-      transform: translateY(0) translateX(0) rotate(0deg);
-      opacity: 0;
-    }
-    10% {
-      opacity: 0.6;
-    }
-    50% {
-      transform: translateY(-55vh) translateX(20px) rotate(15deg);
-    }
-    90% {
-      opacity: 0.5;
-    }
-    100% {
-      transform: translateY(-110vh) translateX(-20px) rotate(-10deg);
-      opacity: 0;
-    }
-  }
-
-  /* ---------- Main card ---------- */
-  .card {
-    position: relative;
-    z-index: 2;
-    background: rgba(255, 255, 255, 0.75);
-    backdrop-filter: blur(6px);
-    border-radius: 32px;
-    padding: 3rem 2.5rem;
-    max-width: 560px;
-    width: 90%;
-    text-align: center;
-    box-shadow: 0 20px 60px rgba(255, 92, 138, 0.25);
-    border: 2px solid rgba(255, 255, 255, 0.6);
-  }
-
-  .mascotte {
-    font-size: 4.5rem;
-    display: inline-block;
-    animation: bounce 2.2s ease-in-out infinite;
-    margin-bottom: 0.5rem;
-  }
-
-  @keyframes bounce {
-    0%, 100% { transform: translateY(0) rotate(-4deg); }
-    25% { transform: translateY(-14px) rotate(4deg); }
-    50% { transform: translateY(0) rotate(-2deg); }
-    75% { transform: translateY(-8px) rotate(2deg); }
-  }
-
-  h1 {
-    font-family: 'Dancing Script', cursive;
-    font-size: clamp(2.2rem, 6vw, 3.4rem);
-    color: var(--pink-strong);
-    margin: 0.2rem 0 1.8rem;
-    line-height: 1.2;
-    text-shadow: 2px 2px 0 rgba(255, 255, 255, 0.6);
-  }
-
-  .subtitle {
-    font-size: 0.95rem;
-    color: var(--text-dark);
-    opacity: 0.75;
-    margin-bottom: 2rem;
-  }
-
-  .buttons-row {
-    display: flex;
-    gap: 1.2rem;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-    min-height: 70px;
-  }
-
-  button {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 600;
-    font-size: 1.05rem;
-    padding: 0.9rem 1.8rem;
-    border: none;
-    border-radius: 50px;
-    cursor: pointer;
-    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease;
-    white-space: nowrap;
-  }
-
-  #yes-btn {
-    background: linear-gradient(135deg, var(--green-yes), var(--green-yes-dark));
-    color: #fff;
-    box-shadow: 0 8px 20px rgba(76, 175, 125, 0.4);
-  }
-
-  #yes-btn:hover {
-    transform: scale(1.08);
-    box-shadow: 0 12px 26px rgba(76, 175, 125, 0.5);
-  }
-
-  #yes-btn:active {
-    transform: scale(0.97);
-  }
-
-  #no-btn {
-    background: #e2dede;
-    color: #7a7a7a;
-    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
-    transition: transform 0.12s ease, top 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), left 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-
-  #no-btn.fleeing {
-    position: fixed;
-    z-index: 50;
-  }
-
-  /* ---------- Celebration screen ---------- */
-  .celebration {
-    display: none;
-    z-index: 2;
-    position: relative;
-    text-align: center;
-    animation: popIn 0.5s ease;
-  }
-
-  .celebration.visible {
-    display: block;
-  }
-
-  .celebration .mascotte {
-    font-size: 5.5rem;
-    animation: spinPulse 1.4s ease-in-out infinite;
-  }
-
-  @keyframes spinPulse {
-    0%, 100% { transform: scale(1) rotate(0deg); }
-    50% { transform: scale(1.15) rotate(8deg); }
-  }
-
-  .celebration h2 {
-    font-family: 'Dancing Script', cursive;
-    font-size: clamp(1.8rem, 5.5vw, 2.8rem);
-    color: var(--pink-strong);
-    margin: 0.5rem 0 0.8rem;
-  }
-
-  .celebration p {
-    font-size: 1.05rem;
-    color: var(--text-dark);
-    opacity: 0.85;
-  }
-
-  @keyframes popIn {
-    0% { transform: scale(0.7); opacity: 0; }
-    100% { transform: scale(1); opacity: 1; }
-  }
-
-  #confetti-canvas {
-    position: fixed;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 40;
-  }
-
-  @media (max-width: 480px) {
-    .card {
-      padding: 2.2rem 1.4rem;
-      border-radius: 24px;
-    }
-
-    .mascotte {
-      font-size: 3.4rem;
-    }
-
-    button {
-      font-size: 0.95rem;
-      padding: 0.8rem 1.4rem;
-    }
-  }
-</style>
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 51, 102, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0); }
+        }
+    </style>
 </head>
 <body>
 
-  <div class="hearts-bg" id="hearts-bg"></div>
-
-  <canvas id="confetti-canvas"></canvas>
-
-  <div class="card">
-
-    <div id="question-screen">
-      <div class="mascotte">🐻💕</div>
-      <h1>Veux-tu aller en date avec moi ?</h1>
-      <p class="subtitle" id="hint-text">(psst... choisis avec ton cœur 💗)</p>
-      <div class="buttons-row">
-        <button id="yes-btn">Oui ! ❤️</button>
-        <button id="no-btn">Non 😢</button>
-      </div>
+    <div id="ui-container">
+        <!-- Déclencheurs directs pour forcer la lecture sur Apple -->
+        <button id="kissBtn" onclick="startCascade()" ontouchstart="startCascade()">Déclencher la cascade ! 💖</button>
     </div>
 
-    <div class="celebration" id="celebration-screen">
-      <div class="mascotte">🎉🥰</div>
-      <h2>Yaaay ! C'est noté !</h2>
-      <p>Prépare-toi pour une super soirée rien que pour nous deux 🥰✨</p>
+    <script>
+        const sweetWords = [
+            "bisous mon bébé 🥺",
+            "bisous mi vida 💖",
+            "bisous mon cœur 💘",
+            "bisous ma chérie 🥰",
+            "bisous mon amour ❤️",
+            "bisous mon trésor ✨",
+            "bisous ma perle 🦪",
+            "bisous mon ange 👼",
+            "bisous mon soleil ☀️",
+            "bisous ma reine 👑",
+            "bisous mon doudou 🧸",
+            "bisous ma beauté 💋",
+            "bisous ma douceur 🌸",
+            "bisous mon étoile 🌟",
+            "bisous my lady"
+        ];
+
+        const colors = ['#ff99c2', '#ff4d94', '#ff1a75', '#ffb3d9', '#ffffff', '#ff66a3'];
+
+        let isRaining = false;
+        let buttonEl = document.getElementById('kissBtn');
+
+        function startCascade() {
+            if (isRaining) return;
+            isRaining = true;
+            
+            buttonEl.style.display = 'none';
+            setInterval(createWordDrop, 100); 
+        }
+
+        function createWordDrop() {
+            const wordElement = document.createElement('div');
+            wordElement.classList.add('word-drop');
+            
+            wordElement.innerHTML = sweetWords[Math.floor(Math.random() * sweetWords.length)];
+            
+            wordElement.style.left = (Math.random() * 70 + 5) + 'vw';
+            wordElement.style.color = colors[Math.floor(Math.random() * colors.length)];
+            wordElement.style.fontSize = (Math.random() * 8 + 14) + 'px';
+            
+            const duration = Math.random() * 3 + 3;
+            wordElement.style.animationDuration = duration + 's';
+            
+            document.body.appendChild(wordElement);
+
+            setTimeout(() => {
+                wordElement.remove();
+            }, duration * 1000);
+        }
+    </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cascade de Bisous</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: linear-gradient(135deg, #1a0510, #3a0b22);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            
+            /* Correction spéciale iOS Safari (Barre de navigation) */
+            height: 100vh;
+            height: 100dvh;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+        }
+
+        #ui-container {
+            text-align: center;
+            z-index: 9999;
+        }
+
+        button {
+            -webkit-appearance: none;
+            appearance: none;
+            padding: 20px 40px;
+            font-size: 22px;
+            font-weight: bold;
+            border-radius: 50px;
+            background-color: #ff3366;
+            color: white;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(255, 51, 102, 0.6);
+            animation: pulse 2s infinite;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        button:active {
+            transform: scale(0.95);
+            background-color: #ff1a53;
+        }
+
+        .word-drop {
+            position: absolute;
+            top: -50px;
+            white-space: nowrap;
+            font-weight: bold;
+            pointer-events: none;
+            animation: waterfall linear forwards;
+            text-shadow: 0px 0px 8px rgba(255, 255, 255, 0.5);
+            z-index: 10;
+        }
+
+        @keyframes waterfall {
+            0% { transform: translateY(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(115vh); opacity: 0; }
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 51, 102, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="ui-container">
+        <!-- Déclencheurs directs pour forcer la lecture sur Apple -->
+        <button id="kissBtn" onclick="startCascade()" ontouchstart="startCascade()">Déclencher la cascade ! 💖</button>
     </div>
 
-  </div>
+    <script>
+        const sweetWords = [
+            "bisous mon bébé 🥺",
+            "bisous mi vida 💖",
+            "bisous mon cœur 💘",
+            "bisous ma chérie 🥰",
+            "bisous mon amour ❤️",
+            "bisous mon trésor ✨",
+            "bisous ma perle 🦪",
+            "bisous mon ange 👼",
+            "bisous mon soleil ☀️",
+            "bisous ma reine 👑",
+            "bisous mon doudou 🧸",
+            "bisous ma beauté 💋",
+            "bisous ma douceur 🌸",
+            "bisous mon étoile 🌟",
+            "bisous my lady"
+        ];
 
-<script>
-  // ---------- Floating hearts background ----------
-  (function createHearts() {
-    const container = document.getElementById('hearts-bg');
-    const symbols = ['❤️', '💕', '💗', '💖', '💓'];
-    const count = 22;
+        const colors = ['#ff99c2', '#ff4d94', '#ff1a75', '#ffb3d9', '#ffffff', '#ff66a3'];
 
-    for (let i = 0; i < count; i++) {
-      const heart = document.createElement('span');
-      heart.className = 'heart';
-      heart.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+        let isRaining = false;
+        let buttonEl = document.getElementById('kissBtn');
 
-      const size = 14 + Math.random() * 26;
-      const left = Math.random() * 100;
-      const duration = 8 + Math.random() * 10;
-      const delay = Math.random() * 10;
+        function startCascade() {
+            if (isRaining) return;
+            isRaining = true;
+            
+            buttonEl.style.display = 'none';
+            setInterval(createWordDrop, 100); 
+        }
 
-      heart.style.left = left + 'vw';
-      heart.style.fontSize = size + 'px';
-      heart.style.animationDuration = duration + 's';
-      heart.style.animationDelay = delay + 's';
+        function createWordDrop() {
+            const wordElement = document.createElement('div');
+            wordElement.classList.add('word-drop');
+            
+            wordElement.innerHTML = sweetWords[Math.floor(Math.random() * sweetWords.length)];
+            
+            wordElement.style.left = (Math.random() * 70 + 5) + 'vw';
+            wordElement.style.color = colors[Math.floor(Math.random() * colors.length)];
+            wordElement.style.fontSize = (Math.random() * 8 + 14) + 'px';
+            
+            const duration = Math.random() * 3 + 3;
+            wordElement.style.animationDuration = duration + 's';
+            
+            document.body.appendChild(wordElement);
 
-      container.appendChild(heart);
-    }
-  })();
-
-  // ---------- "Non" button dodge logic ----------
-  const noBtn = document.getElementById('no-btn');
-  const hintText = document.getElementById('hint-text');
-  const yesBtn = document.getElementById('yes-btn');
-
-  const dodgePhrases = [
-    'Non 😢',
-    'Es-tu sûr ? 🥺',
-    'Vraiment ?! 😳',
-    'Réfléchis bien... 🤔',
-    'Dernière chance 😤',
-    'Tu ne m\'auras pas ! 🏃'
-  ];
-  let dodgeCount = 0;
-  let yesScale = 1;
-
-  function dodge() {
-    if (!noBtn.classList.contains('fleeing')) {
-      const rect = noBtn.getBoundingClientRect();
-      noBtn.style.width = rect.width + 'px';
-      noBtn.classList.add('fleeing');
-    }
-
-    const btnRect = noBtn.getBoundingClientRect();
-    const margin = 12;
-    const maxX = window.innerWidth - btnRect.width - margin;
-    const maxY = window.innerHeight - btnRect.height - margin;
-
-    const newX = Math.max(margin, Math.random() * maxX);
-    const newY = Math.max(margin, Math.random() * maxY);
-
-    noBtn.style.left = newX + 'px';
-    noBtn.style.top = newY + 'px';
-
-    dodgeCount++;
-    noBtn.textContent = dodgePhrases[Math.min(dodgeCount, dodgePhrases.length - 1)];
-
-    if (hintText) {
-      hintText.textContent = '(le "Non" fuit... il est temps de dire oui 😏)';
-    }
-
-    yesScale = Math.min(1.4, 1 + dodgeCount * 0.04);
-    yesBtn.style.transform = 'scale(' + yesScale + ')';
-  }
-
-  noBtn.addEventListener('pointerenter', dodge);
-  noBtn.addEventListener('touchstart', function (e) {
-    e.preventDefault();
-    dodge();
-  }, { passive: false });
-  noBtn.addEventListener('click', function (e) {
-    e.preventDefault();
-    dodge();
-  });
-
-  window.addEventListener('resize', function () {
-    if (noBtn.classList.contains('fleeing')) {
-      const btnRect = noBtn.getBoundingClientRect();
-      const maxX = window.innerWidth - btnRect.width - 12;
-      const maxY = window.innerHeight - btnRect.height - 12;
-      noBtn.style.left = Math.min(parseFloat(noBtn.style.left), maxX) + 'px';
-      noBtn.style.top = Math.min(parseFloat(noBtn.style.top), maxY) + 'px';
-    }
-  });
-
-  // ---------- "Oui" click -> celebration + confetti ----------
-  const questionScreen = document.getElementById('question-screen');
-  const celebrationScreen = document.getElementById('celebration-screen');
-
-  yesBtn.addEventListener('click', function () {
-    questionScreen.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
-    questionScreen.style.opacity = '0';
-    questionScreen.style.transform = 'scale(0.85)';
-
-    setTimeout(function () {
-      questionScreen.style.display = 'none';
-      celebrationScreen.classList.add('visible');
-      launchConfetti();
-    }, 350);
-  });
-
-  // ---------- Lightweight vanilla confetti ----------
-  const canvas = document.getElementById('confetti-canvas');
-  const ctx = canvas.getContext('2d');
-  let confettiParticles = [];
-  let confettiAnimId = null;
-
-  function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
-  resizeCanvas();
-  window.addEventListener('resize', resizeCanvas);
-
-  const confettiColors = ['#ff8fab', '#ff5c8a', '#ffd6e5', '#6fcf97', '#ffe066', '#a29bfe'];
-
-  function launchConfetti() {
-    confettiParticles = [];
-    const count = 160;
-
-    for (let i = 0; i < count; i++) {
-      confettiParticles.push({
-        x: Math.random() * canvas.width,
-        y: -20 - Math.random() * canvas.height * 0.5,
-        size: 6 + Math.random() * 6,
-        color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
-        speedY: 2 + Math.random() * 3,
-        speedX: (Math.random() - 0.5) * 2,
-        rotation: Math.random() * 360,
-        rotationSpeed: (Math.random() - 0.5) * 8,
-        shape: Math.random() > 0.5 ? 'circle' : 'rect'
-      });
-    }
-
-    if (confettiAnimId) cancelAnimationFrame(confettiAnimId);
-    animateConfetti();
-
-    setTimeout(function () {
-      cancelAnimationFrame(confettiAnimId);
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }, 4500);
-  }
-
-  function animateConfetti() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    confettiParticles.forEach(function (p) {
-      p.y += p.speedY;
-      p.x += p.speedX;
-      p.rotation += p.rotationSpeed;
-
-      ctx.save();
-      ctx.translate(p.x, p.y);
-      ctx.rotate((p.rotation * Math.PI) / 180);
-      ctx.fillStyle = p.color;
-
-      if (p.shape === 'circle') {
-        ctx.beginPath();
-        ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2);
-        ctx.fill();
-      } else {
-        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
-      }
-
-      ctx.restore();
-    });
-
-    confettiParticles = confettiParticles.filter(function (p) {
-      return p.y < canvas.height + 20;
-    });
-
-    confettiAnimId = requestAnimationFrame(animateConfetti);
-  }
-</script>
-
+            setTimeout(() => {
+                wordElement.remove();
+            }, duration * 1000);
+        }
+    </script>
 </body>
 </html>
