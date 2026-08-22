@@ -7,34 +7,24 @@
     <style>
         body {
             margin: 0;
-            padding: 0;
-            overflow: hidden;
+            overflow: hidden; /* Empêche de scroller sur le côté */
             background: linear-gradient(135deg, #1a0510, #3a0b22);
             display: flex;
             justify-content: center;
             align-items: center;
-            
-            /* Correction spéciale iOS Safari (Barre de navigation) */
             height: 100vh;
-            height: 100dvh;
-            position: fixed;
-            width: 100%;
-            top: 0;
-            left: 0;
-            
             font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            touch-action: none; /* Améliore l'expérience tactile */
         }
 
         #ui-container {
             text-align: center;
-            z-index: 9999;
+            z-index: 10;
         }
 
         button {
-            -webkit-appearance: none;
-            appearance: none;
-            padding: 20px 40px;
-            font-size: 22px;
+            padding: 18px 30px;
+            font-size: 20px; /* Taille adaptée pour mobile */
             font-weight: bold;
             border-radius: 50px;
             background-color: #ff3366;
@@ -59,7 +49,6 @@
             pointer-events: none;
             animation: waterfall linear forwards;
             text-shadow: 0px 0px 8px rgba(255, 255, 255, 0.5);
-            z-index: 10;
         }
 
         @keyframes waterfall {
@@ -79,11 +68,13 @@
 <body>
 
     <div id="ui-container">
-        <!-- Déclencheurs directs pour forcer la lecture sur Apple -->
-        <button id="kissBtn" onclick="startCascade()" ontouchstart="startCascade()">Déclencher la cascade ! 💖</button>
+        <button id="kissBtn">Déclencher la cascade ! 💖</button>
     </div>
 
     <script>
+        const button = document.getElementById('kissBtn');
+        
+        // Ta liste exacte et validée
         const sweetWords = [
             "bisous mon bébé 🥺",
             "bisous mi vida 💖",
@@ -105,15 +96,15 @@
         const colors = ['#ff99c2', '#ff4d94', '#ff1a75', '#ffb3d9', '#ffffff', '#ff66a3'];
 
         let isRaining = false;
-        let buttonEl = document.getElementById('kissBtn');
 
-        function startCascade() {
+        button.addEventListener('click', () => {
             if (isRaining) return;
             isRaining = true;
             
-            buttonEl.style.display = 'none';
+            button.style.display = 'none';
+            // Une fréquence un tout petit peu plus espacée (100ms) pour que le téléphone reste ultra fluide
             setInterval(createWordDrop, 100); 
-        }
+        });
 
         function createWordDrop() {
             const wordElement = document.createElement('div');
@@ -121,148 +112,15 @@
             
             wordElement.innerHTML = sweetWords[Math.floor(Math.random() * sweetWords.length)];
             
+            // Apparition entre 5% et 75% de l'écran pour éviter que le texte soit coupé à droite sur mobile
             wordElement.style.left = (Math.random() * 70 + 5) + 'vw';
+            
             wordElement.style.color = colors[Math.floor(Math.random() * colors.length)];
+            
+            // Tailles adaptées aux petits écrans (entre 14px et 22px)
             wordElement.style.fontSize = (Math.random() * 8 + 14) + 'px';
             
-            const duration = Math.random() * 3 + 3;
-            wordElement.style.animationDuration = duration + 's';
-            
-            document.body.appendChild(wordElement);
-
-            setTimeout(() => {
-                wordElement.remove();
-            }, duration * 1000);
-        }
-    </script>
-</body>
-</html><!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cascade de Bisous</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            background: linear-gradient(135deg, #1a0510, #3a0b22);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            
-            /* Correction spéciale iOS Safari (Barre de navigation) */
-            height: 100vh;
-            height: 100dvh;
-            position: fixed;
-            width: 100%;
-            top: 0;
-            left: 0;
-            
-            font-family: 'Comic Sans MS', 'Arial', sans-serif;
-        }
-
-        #ui-container {
-            text-align: center;
-            z-index: 9999;
-        }
-
-        button {
-            -webkit-appearance: none;
-            appearance: none;
-            padding: 20px 40px;
-            font-size: 22px;
-            font-weight: bold;
-            border-radius: 50px;
-            background-color: #ff3366;
-            color: white;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 8px 25px rgba(255, 51, 102, 0.6);
-            animation: pulse 2s infinite;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        button:active {
-            transform: scale(0.95);
-            background-color: #ff1a53;
-        }
-
-        .word-drop {
-            position: absolute;
-            top: -50px;
-            white-space: nowrap;
-            font-weight: bold;
-            pointer-events: none;
-            animation: waterfall linear forwards;
-            text-shadow: 0px 0px 8px rgba(255, 255, 255, 0.5);
-            z-index: 10;
-        }
-
-        @keyframes waterfall {
-            0% { transform: translateY(0); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translateY(115vh); opacity: 0; }
-        }
-
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.7); }
-            70% { box-shadow: 0 0 0 15px rgba(255, 51, 102, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0); }
-        }
-    </style>
-</head>
-<body>
-
-    <div id="ui-container">
-        <!-- Déclencheurs directs pour forcer la lecture sur Apple -->
-        <button id="kissBtn" onclick="startCascade()" ontouchstart="startCascade()">Déclencher la cascade ! 💖</button>
-    </div>
-
-    <script>
-        const sweetWords = [
-            "bisous mon bébé 🥺",
-            "bisous mi vida 💖",
-            "bisous mon cœur 💘",
-            "bisous ma chérie 🥰",
-            "bisous mon amour ❤️",
-            "bisous mon trésor ✨",
-            "bisous ma perle 🦪",
-            "bisous mon ange 👼",
-            "bisous mon soleil ☀️",
-            "bisous ma reine 👑",
-            "bisous mon doudou 🧸",
-            "bisous ma beauté 💋",
-            "bisous ma douceur 🌸",
-            "bisous mon étoile 🌟",
-            "bisous my lady"
-        ];
-
-        const colors = ['#ff99c2', '#ff4d94', '#ff1a75', '#ffb3d9', '#ffffff', '#ff66a3'];
-
-        let isRaining = false;
-        let buttonEl = document.getElementById('kissBtn');
-
-        function startCascade() {
-            if (isRaining) return;
-            isRaining = true;
-            
-            buttonEl.style.display = 'none';
-            setInterval(createWordDrop, 100); 
-        }
-
-        function createWordDrop() {
-            const wordElement = document.createElement('div');
-            wordElement.classList.add('word-drop');
-            
-            wordElement.innerHTML = sweetWords[Math.floor(Math.random() * sweetWords.length)];
-            
-            wordElement.style.left = (Math.random() * 70 + 5) + 'vw';
-            wordElement.style.color = colors[Math.floor(Math.random() * colors.length)];
-            wordElement.style.fontSize = (Math.random() * 8 + 14) + 'px';
-            
+            // Vitesse de chute
             const duration = Math.random() * 3 + 3;
             wordElement.style.animationDuration = duration + 's';
             
