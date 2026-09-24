@@ -1,135 +1,846 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cascade de Bisous</title>
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden; /* Empêche de scroller sur le côté */
-            background: linear-gradient(135deg, #1a0510, #3a0b22);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            font-family: 'Comic Sans MS', 'Arial', sans-serif;
-            touch-action: none; /* Améliore l'expérience tactile */
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Une question pour toi</title>
+<meta name="description" content="Une petite question, rien que pour toi.">
+<meta name="theme-color" content="#1a0510">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23ff3366' d='M12 21s-7.5-4.6-10-9.1C.5 8.6 2 4.8 5.6 4.1c2.1-.4 4 .6 5 2.3 1-1.7 2.9-2.7 5-2.3 3.6.7 5.1 4.5 3.6 7.8C19.5 16.4 12 21 12 21z'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   Style stamp — playful/dating mood, dark rose palette extended
+   from the project's existing brand (#1a0510 → #3a0b22, #ff3366)
+   rather than a fresh generated palette, since a real reference
+   already existed in this file. Type: Fredoka (display) + Nunito
+   (body) — the tastemaker "playful/consumer, dating" pairing.
+   Contrast verified with check_contrast.py --matrix (7 roles):
+   text-safe: bg/on-primary, surface/on-primary, text/bg,
+   text/surface, border/on-primary, text/border, bg/accent,
+   surface/accent, accent/border, primary/on-primary.
+   UI-safe: text/primary, bg/primary, surface/primary.
+   ============================================================ */
+:root{
+  --color-bg:#1a0510;
+  --color-bg-end:#3a0b22;
+  --color-surface:#2b0a1a;
+  --color-surface-2:#33101f;
+  --color-text:#fdf2f6;
+  --color-text-muted:#d9a9bc;
+  --color-primary:#e0134f;
+  --color-on-primary:#ffffff;
+  --color-accent:#ff9ec7;
+  --color-accent-soft:#ff3366;
+  --color-border:#5c1c38;
 
-        #ui-container {
-            text-align: center;
-            z-index: 10;
-        }
+  --space-2:8px; --space-3:12px; --space-4:16px; --space-5:20px;
+  --space-6:24px; --space-8:32px; --space-10:40px; --space-12:48px; --space-16:64px;
 
-        button {
-            padding: 18px 30px;
-            font-size: 20px; /* Taille adaptée pour mobile */
-            font-weight: bold;
-            border-radius: 50px;
-            background-color: #ff3366;
-            color: white;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 8px 25px rgba(255, 51, 102, 0.6);
-            animation: pulse 2s infinite;
-            -webkit-tap-highlight-color: transparent;
-        }
+  --radius-sm:10px; --radius-md:16px; --radius-lg:26px; --radius-pill:999px;
+  --shadow-soft:0 18px 40px -12px rgba(0,0,0,.55);
+  --shadow-glow:0 10px 28px -6px rgba(224,19,79,.55);
 
-        button:active {
-            transform: scale(0.95);
-            background-color: #ff1a53;
-        }
+  --ease-out:cubic-bezier(.16,1,.3,1);
+  --dur-fast:160ms; --dur-base:260ms; --dur-slow:420ms;
+}
 
-        .word-drop {
-            position: absolute;
-            top: -50px;
-            white-space: nowrap;
-            font-weight: bold;
-            pointer-events: none;
-            animation: waterfall linear forwards;
-            text-shadow: 0px 0px 8px rgba(255, 255, 255, 0.5);
-        }
+*,*::before,*::after{ box-sizing:border-box; }
+html{ -webkit-text-size-adjust:100%; }
+body{
+  margin:0;
+  min-height:100dvh;
+  background:linear-gradient(160deg,var(--color-bg) 0%,var(--color-bg-end) 70%);
+  color:var(--color-text);
+  font-family:'Nunito',system-ui,-apple-system,'Segoe UI',sans-serif;
+  overflow-x:hidden;
+  position:relative;
+  -webkit-tap-highlight-color:transparent;
+}
+h1,h2{ font-family:'Fredoka',system-ui,sans-serif; margin:0; }
+p{ margin:0; }
+button{ font-family:inherit; }
+.sr-only{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; padding:0; margin:-1px; }
 
-        @keyframes waterfall {
-            0% { transform: translateY(0); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translateY(115vh); opacity: 0; }
-        }
+*:focus-visible{ outline:3px solid var(--color-accent); outline-offset:3px; border-radius:6px; }
 
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.7); }
-            70% { box-shadow: 0 0 0 15px rgba(255, 51, 102, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0); }
-        }
-    </style>
+/* ---------- ambient background hearts ---------- */
+#ambient{ position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:0; }
+.amb-heart{ position:absolute; bottom:-10vh; color:var(--color-accent); opacity:.18; will-change:transform,opacity; animation:floatUp linear infinite; }
+@keyframes floatUp{
+  0%{ transform:translateY(0) translateX(0) rotate(0deg); opacity:0; }
+  10%{ opacity:.22; }
+  90%{ opacity:.16; }
+  100%{ transform:translateY(-115vh) translateX(var(--drift,20px)) rotate(20deg); opacity:0; }
+}
+
+/* ---------- layout / stages ---------- */
+#app{ position:relative; z-index:1; min-height:100dvh; display:flex; flex-direction:column; }
+.stage{
+  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; padding:var(--space-8) var(--space-5) var(--space-16);
+  max-width:560px; margin:0 auto; width:100%;
+  animation:stageIn var(--dur-slow) var(--ease-out) both;
+}
+@keyframes stageIn{ from{ opacity:0; transform:translateY(14px); } to{ opacity:1; transform:translateY(0); } }
+.stage[hidden]{ display:none; }
+
+.kicker{
+  font-weight:700; letter-spacing:.06em; text-transform:uppercase; font-size:.78rem;
+  color:var(--color-accent); margin-bottom:var(--space-3);
+}
+h1{
+  font-weight:700; font-size:clamp(2rem,7vw,3.1rem); line-height:1.08; letter-spacing:-.01em;
+  text-wrap:balance;
+}
+.subtext{ color:var(--color-text-muted); font-size:1.05rem; margin-top:var(--space-3); font-weight:600; }
+
+.choice-row{
+  position:relative; width:100%; margin-top:var(--space-10);
+  height:190px;
+  display:flex; align-items:center; justify-content:center;
+}
+
+.btn{
+  border:none; cursor:pointer; border-radius:var(--radius-pill);
+  font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.05rem;
+  padding:16px 30px; display:inline-flex; align-items:center; gap:10px;
+  transition:transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out);
+}
+.btn svg{ width:19px; height:19px; }
+.btn:active{ transform:scale(.95); }
+
+.btn-primary{
+  background:var(--color-primary); color:var(--color-on-primary);
+  box-shadow:var(--shadow-glow);
+  animation:pulse 2.4s infinite;
+  transform:scale(var(--oui-scale,1));
+}
+.btn-primary:hover{ box-shadow:0 14px 34px -6px rgba(224,19,79,.7); }
+@keyframes pulse{
+  0%{ box-shadow:0 0 0 0 rgba(224,19,79,.55),var(--shadow-glow); }
+  70%{ box-shadow:0 0 0 16px rgba(224,19,79,0),var(--shadow-glow); }
+  100%{ box-shadow:0 0 0 0 rgba(224,19,79,0),var(--shadow-glow); }
+}
+
+.btn-ghost{
+  position:absolute; top:50%; left:calc(50% + 14px); transform:translate(0,-50%);
+  background:transparent; color:var(--color-text-muted);
+  border:2px solid var(--color-border);
+}
+.btn-ghost:hover{ color:var(--color-text); }
+
+.btn-outline{
+  background:transparent; color:var(--color-text); border:2px solid var(--color-border);
+}
+.btn-outline:hover{ border-color:var(--color-accent); color:var(--color-accent); }
+
+/* ---------- invitation card ---------- */
+.invite-card{
+  margin-top:var(--space-8); width:100%; text-align:left;
+  background:var(--color-surface); border:1px solid var(--color-border);
+  border-radius:var(--radius-lg); padding:var(--space-8);
+  box-shadow:var(--shadow-soft); position:relative; overflow:hidden;
+}
+.invite-card::before{
+  content:''; position:absolute; inset:0 0 auto 0; height:4px;
+  background:linear-gradient(90deg,var(--color-accent-soft),var(--color-accent));
+}
+.invite-message{ font-size:1.05rem; line-height:1.6; color:var(--color-text); }
+.invite-from{ margin-top:var(--space-3); color:var(--color-text-muted); font-style:italic; font-weight:700; }
+.invite-details{ list-style:none; margin:var(--space-6) 0 0; padding:0; display:flex; flex-direction:column; gap:var(--space-3); }
+.invite-details li{ display:flex; align-items:center; gap:var(--space-3); font-weight:700; }
+.invite-details svg{ width:20px; height:20px; flex:none; color:var(--color-accent); }
+.invite-details li span{ text-transform:capitalize; }
+.invite-countdown{ margin-top:var(--space-4); font-size:.85rem; font-weight:800; color:var(--color-accent); letter-spacing:.02em; }
+.invite-actions{ margin-top:var(--space-8); display:flex; flex-wrap:wrap; gap:var(--space-3); }
+
+/* ---------- kiss cascade (bonus, existing feature refined) ---------- */
+.word-drop{
+  position:fixed; top:-50px; white-space:nowrap; font-weight:800; pointer-events:none;
+  z-index:5; animation:waterfall linear forwards; text-shadow:0 0 10px rgba(0,0,0,.35);
+}
+@keyframes waterfall{
+  0%{ transform:translateY(0); opacity:0; }
+  10%{ opacity:1; }
+  90%{ opacity:1; }
+  100%{ transform:translateY(115vh); opacity:0; }
+}
+
+/* ---------- admin access ---------- */
+.admin-fab{
+  position:fixed; right:calc(var(--space-4) + env(safe-area-inset-right,0px));
+  bottom:calc(var(--space-4) + env(safe-area-inset-bottom,0px));
+  width:44px; height:44px; border-radius:50%; z-index:20;
+  background:rgba(43,10,26,.7); border:1px solid var(--color-border);
+  color:var(--color-text-muted); display:flex; align-items:center; justify-content:center;
+  cursor:pointer; opacity:.5; backdrop-filter:blur(6px);
+  transition:opacity var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+.admin-fab svg{ width:18px; height:18px; }
+.admin-fab:hover,.admin-fab:focus-visible{ opacity:1; color:var(--color-accent); transform:scale(1.06); }
+
+/* ---------- modals ---------- */
+.modal-overlay{
+  position:fixed; inset:0; background:rgba(8,2,5,.68); backdrop-filter:blur(4px);
+  display:flex; align-items:center; justify-content:center; padding:var(--space-4);
+  z-index:50; animation:overlayIn var(--dur-base) var(--ease-out) both;
+}
+.modal-overlay[hidden]{ display:none; }
+@keyframes overlayIn{ from{ opacity:0; } to{ opacity:1; } }
+.modal{
+  position:relative; width:100%; max-width:420px; max-height:90dvh; overflow-y:auto;
+  background:var(--color-surface-2); border:1px solid var(--color-border);
+  border-radius:var(--radius-lg); padding:var(--space-8);
+  box-shadow:var(--shadow-soft); animation:modalIn var(--dur-slow) var(--ease-out) both;
+}
+.modal-lg{ max-width:560px; }
+@keyframes modalIn{ from{ opacity:0; transform:translateY(10px) scale(.98); } to{ opacity:1; transform:translateY(0) scale(1); } }
+.modal.shake{ animation:shake .4s; }
+@keyframes shake{ 10%,90%{ transform:translateX(-1px); } 20%,80%{ transform:translateX(3px); } 30%,50%,70%{ transform:translateX(-6px); } 40%,60%{ transform:translateX(6px); } }
+.modal h2{ font-size:1.4rem; margin-bottom:var(--space-2); }
+.modal > p{ color:var(--color-text-muted); font-weight:600; margin-bottom:var(--space-5); }
+.modal-close{
+  position:absolute; top:var(--space-4); right:var(--space-4); width:34px; height:34px;
+  border-radius:50%; border:1px solid var(--color-border); background:transparent; color:var(--color-text-muted);
+  display:flex; align-items:center; justify-content:center; cursor:pointer;
+}
+.modal-close svg{ width:16px; height:16px; }
+.modal-close:hover{ color:var(--color-text); }
+.modal-actions{ display:flex; justify-content:flex-end; gap:var(--space-3); margin-top:var(--space-6); }
+
+#pinInput{
+  width:100%; font-size:1.6rem; letter-spacing:.6em; text-align:center; padding:14px 10px 14px 20px;
+  background:var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-md);
+  color:var(--color-text); font-weight:700;
+}
+.error-text{ color:var(--color-accent-soft); font-weight:700; font-size:.9rem; margin-top:var(--space-3); }
+.error-text[hidden]{ display:none; }
+
+fieldset{ border:none; padding:0; margin:0 0 var(--space-6); }
+legend{ font-family:'Fredoka',sans-serif; font-weight:600; color:var(--color-accent); font-size:.95rem; margin-bottom:var(--space-3); padding:0; }
+.field{ margin-bottom:var(--space-4); }
+.field label{ display:block; font-size:.8rem; font-weight:800; letter-spacing:.02em; color:var(--color-text-muted); margin-bottom:6px; }
+.field input,.field textarea{
+  width:100%; background:var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-sm);
+  color:var(--color-text); padding:11px 13px; font-size:.98rem; font-family:inherit;
+}
+.field textarea{ resize:vertical; min-height:74px; }
+.field-row{ display:flex; gap:var(--space-3); }
+.field-row .field{ flex:1; }
+
+.link-row{ display:flex; gap:var(--space-2); margin-bottom:var(--space-2); }
+.link-row input{
+  flex:1; background:var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-sm);
+  color:var(--color-text); padding:11px 13px; font-size:.85rem; min-width:0;
+}
+.icon-btn{
+  flex:none; width:42px; height:42px; border-radius:var(--radius-sm); border:1px solid var(--color-border);
+  background:transparent; color:var(--color-text); display:flex; align-items:center; justify-content:center; cursor:pointer;
+}
+.icon-btn svg{ width:18px; height:18px; }
+.icon-btn:hover{ border-color:var(--color-accent); color:var(--color-accent); }
+.field-hint{ font-size:.8rem; color:var(--color-text-muted); margin-top:var(--space-2); line-height:1.5; }
+hr{ border:none; border-top:1px solid var(--color-border); margin:var(--space-6) 0; }
+
+.toast{
+  position:fixed; left:50%; bottom:calc(var(--space-8) + env(safe-area-inset-bottom,0px));
+  transform:translateX(-50%); background:var(--color-primary); color:var(--color-on-primary);
+  padding:12px 20px; border-radius:var(--radius-pill); font-weight:700; font-size:.9rem;
+  display:flex; align-items:center; gap:8px; z-index:60; box-shadow:var(--shadow-glow);
+  animation:toastIn var(--dur-base) var(--ease-out) both;
+}
+.toast svg{ width:16px; height:16px; }
+.toast[hidden]{ display:none; }
+@keyframes toastIn{ from{ opacity:0; transform:translate(-50%,10px); } to{ opacity:1; transform:translate(-50%,0); } }
+
+@media (min-width:640px){
+  .invite-card{ padding:var(--space-10); }
+  .choice-row{ height:150px; }
+}
+
+@media (prefers-reduced-motion:reduce){
+  *{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; }
+  .btn-primary{ animation:none; }
+  .amb-heart{ display:none; }
+}
+</style>
 </head>
 <body>
 
-    <div id="ui-container">
-        <button id="kissBtn">Déclencher la cascade ! 💖</button>
+<div id="ambient" aria-hidden="true"></div>
+
+<main id="app">
+
+  <section id="stageAsk" class="stage" data-stage>
+    <p class="kicker" id="askKicker" hidden></p>
+    <h1 id="askQuestion" tabindex="-1">Veux-tu sortir avec moi&nbsp;?</h1>
+    <p class="subtext">Un petit oui suffit. 💌</p>
+    <div class="choice-row" id="choiceRow">
+      <button id="btnOui" class="btn btn-primary" type="button">
+        Oui
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-7.5-4.6-10-9.1C.5 8.6 2 4.8 5.6 4.1c2.1-.4 4 .6 5 2.3 1-1.7 2.9-2.7 5-2.3 3.6.7 5.1 4.5 3.6 7.8C19.5 16.4 12 21 12 21z"/></svg>
+      </button>
+      <button id="btnNon" class="btn btn-ghost" type="button">Non</button>
     </div>
+  </section>
 
-    <script>
-        const button = document.getElementById('kissBtn');
-        
-        // Ta liste exacte et validée
-        const sweetWords = [
-            "bisous mon bébé 🥺",
-            "bisous mi vida 💖",
-            "bisous mon cœur 💘",
-            "bisous ma chérie 🥰",
-            "bisous mon amour ❤️",
-            "bisous mon trésor ✨",
-            "bisous ma perle 🦪",
-            "bisous mon ange 👼",
-            "bisous mon soleil ☀️",
-            "bisous ma reine 👑",
-            "bisous mon doudou 🧸",
-            "bisous ma beauté 💋",
-            "bisous ma douceur 🌸",
-            "bisous mon étoile 🌟",
-            "bisous my lady"
-        ];
+  <section id="stageAccepted" class="stage" data-stage hidden>
+    <h1 id="acceptedTitle" tabindex="-1">Elle a dit oui. 🎉</h1>
+    <div class="invite-card">
+      <p class="invite-message" id="inviteMessage"></p>
+      <p class="invite-from" id="inviteFrom" hidden></p>
+      <ul class="invite-details" id="inviteDetails">
+        <li id="itemDate" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4M8 3v4M3 10h18"></path></svg>
+          <span id="inviteDate"></span>
+        </li>
+        <li id="itemTime" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3.5 2"></path></svg>
+          <span id="inviteTime"></span>
+        </li>
+        <li id="itemPlace" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-7.2 7-12a7 7 0 1 0-14 0c0 4.8 7 12 7 12Z"></path><circle cx="12" cy="9" r="2.5"></circle></svg>
+          <span id="invitePlace"></span>
+        </li>
+      </ul>
+      <p class="invite-countdown" id="inviteCountdown" hidden></p>
+      <div class="invite-actions">
+        <button id="btnCalendar" class="btn btn-outline" type="button" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0l-4-4m4 4l4-4"></path><path d="M5 19h14"></path></svg>
+          Ajouter au calendrier
+        </button>
+        <button id="btnCascade" class="btn btn-primary" type="button">
+          Encore des bisous
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-7.5-4.6-10-9.1C.5 8.6 2 4.8 5.6 4.1c2.1-.4 4 .6 5 2.3 1-1.7 2.9-2.7 5-2.3 3.6.7 5.1 4.5 3.6 7.8C19.5 16.4 12 21 12 21z"/></svg>
+        </button>
+      </div>
+    </div>
+  </section>
 
-        const colors = ['#ff99c2', '#ff4d94', '#ff1a75', '#ffb3d9', '#ffffff', '#ff66a3'];
+</main>
 
-        let isRaining = false;
+<button id="adminFab" class="admin-fab" type="button" aria-label="Espace administrateur">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="9" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
+</button>
 
-        button.addEventListener('click', () => {
-            if (isRaining) return;
-            isRaining = true;
-            
-            button.style.display = 'none';
-            // Une fréquence un tout petit peu plus espacée (100ms) pour que le téléphone reste ultra fluide
-            setInterval(createWordDrop, 100); 
-        });
+<div id="loginModal" class="modal-overlay" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+    <button class="modal-close" type="button" data-close aria-label="Fermer">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+    </button>
+    <h2 id="loginTitle">Espace administrateur</h2>
+    <p>Entre le code à 4 chiffres pour personnaliser la demande.</p>
+    <label class="sr-only" for="pinInput">Code à 4 chiffres</label>
+    <input id="pinInput" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off">
+    <p class="error-text" id="pinError" hidden>Code incorrect, réessaie.</p>
+    <div class="modal-actions">
+      <button class="btn btn-outline" type="button" data-close>Annuler</button>
+      <button class="btn btn-primary" type="button" id="pinSubmit">Valider</button>
+    </div>
+  </div>
+</div>
 
-        function createWordDrop() {
-            const wordElement = document.createElement('div');
-            wordElement.classList.add('word-drop');
-            
-            wordElement.innerHTML = sweetWords[Math.floor(Math.random() * sweetWords.length)];
-            
-            // Apparition entre 5% et 75% de l'écran pour éviter que le texte soit coupé à droite sur mobile
-            wordElement.style.left = (Math.random() * 70 + 5) + 'vw';
-            
-            wordElement.style.color = colors[Math.floor(Math.random() * colors.length)];
-            
-            // Tailles adaptées aux petits écrans (entre 14px et 22px)
-            wordElement.style.fontSize = (Math.random() * 8 + 14) + 'px';
-            
-            // Vitesse de chute
-            const duration = Math.random() * 3 + 3;
-            wordElement.style.animationDuration = duration + 's';
-            
-            document.body.appendChild(wordElement);
+<div id="adminModal" class="modal-overlay" hidden>
+  <div class="modal modal-lg" role="dialog" aria-modal="true" aria-labelledby="adminTitle">
+    <button class="modal-close" type="button" data-close aria-label="Fermer">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+    </button>
+    <h2 id="adminTitle">Personnaliser la demande</h2>
+    <p>Remplis les détails, génère le lien, puis envoie-le.</p>
 
-            setTimeout(() => {
-                wordElement.remove();
-            }, duration * 1000);
-        }
-    </script>
+    <form id="adminForm">
+      <fieldset>
+        <legend>Le rendez-vous</legend>
+        <div class="field">
+          <label for="fieldTo">Son prénom (optionnel)</label>
+          <input id="fieldTo" type="text" maxlength="40" placeholder="Ex. Camille">
+        </div>
+        <div class="field">
+          <label for="fieldMessage">Message personnalisé</label>
+          <textarea id="fieldMessage" maxlength="400" placeholder="J'ai réservé un moment rien que pour nous deux."></textarea>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="fieldDate">Date</label>
+            <input id="fieldDate" type="date">
+          </div>
+          <div class="field">
+            <label for="fieldTime">Heure</label>
+            <input id="fieldTime" type="time">
+          </div>
+        </div>
+        <div class="field">
+          <label for="fieldPlace">Lieu</label>
+          <input id="fieldPlace" type="text" maxlength="80" placeholder="Ex. Le Petit Bistrot, 12 rue de la Paix">
+        </div>
+        <div class="field">
+          <label for="fieldFrom">Ta signature (optionnel)</label>
+          <input id="fieldFrom" type="text" maxlength="40" placeholder="Ex. Simon">
+        </div>
+      </fieldset>
+
+      <button class="btn btn-primary" type="button" id="btnGenerate" style="width:100%;justify-content:center;margin-bottom:var(--space-4);">Générer le lien à envoyer</button>
+
+      <div class="link-row">
+        <label class="sr-only" for="linkOutput">Lien généré</label>
+        <input id="linkOutput" type="text" readonly placeholder="Ton lien apparaîtra ici">
+        <button class="icon-btn" type="button" id="btnCopyLink" aria-label="Copier le lien">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>
+        </button>
+      </div>
+      <p class="field-hint">Copie ce lien et envoie-le. Ce sont ces informations (et non le formulaire) qu'elle verra en l'ouvrant.</p>
+
+      <hr>
+
+      <fieldset>
+        <legend>Sécurité de l'accès admin</legend>
+        <div class="field-row">
+          <div class="field">
+            <label for="fieldNewPin">Nouveau code (4 chiffres)</label>
+            <input id="fieldNewPin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="fieldNewPinConfirm">Confirmer le code</label>
+            <input id="fieldNewPinConfirm" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off">
+          </div>
+        </div>
+        <button class="btn btn-outline" type="button" id="btnSavePin">Mettre à jour le code</button>
+        <p class="field-hint">Ce code protège juste cet écran contre les curieux : il vit dans ce navigateur, ce n'est pas un vrai système de sécurité. Ne l'utilise pas pour des informations sensibles.</p>
+      </fieldset>
+    </form>
+  </div>
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite" hidden>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l4 4 10-10"></path></svg>
+  <span id="toastText">Lien copié !</span>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var PIN_KEY = 'proposal_admin_pin';
+  var DRAFT_KEY = 'proposal_admin_draft';
+  var DEFAULT_PIN = '2252';
+
+  var DEFAULTS = {
+    to: '',
+    from: '',
+    message: "J'ai réservé un moment rien que pour nous deux. J'ai hâte d'y être avec toi.",
+    date: '',
+    time: '',
+    place: ''
+  };
+
+  /* ---------- unicode-safe URL-friendly base64 ---------- */
+  function encodeData(obj){
+    var json = JSON.stringify(obj);
+    var b64 = btoa(unescape(encodeURIComponent(json)));
+    return b64.replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+  }
+  function decodeData(str){
+    var b64 = str.replace(/-/g,'+').replace(/_/g,'/');
+    while (b64.length % 4) b64 += '=';
+    try{
+      return JSON.parse(decodeURIComponent(escape(atob(b64))));
+    }catch(e){
+      return null;
+    }
+  }
+
+  function readContentFromHash(){
+    var hash = window.location.hash || '';
+    var match = hash.match(/d=([^&]+)/);
+    if (!match) return null;
+    var data = decodeData(decodeURIComponent(match[1]));
+    if (!data || typeof data !== 'object') return null;
+    var merged = {};
+    for (var k in DEFAULTS){ merged[k] = (typeof data[k] === 'string') ? data[k] : DEFAULTS[k]; }
+    return merged;
+  }
+
+  var content = readContentFromHash() || DEFAULTS;
+
+  /* ---------- formatting helpers ---------- */
+  function formatDateFR(d){
+    if (!d) return '';
+    var dt = new Date(d + 'T00:00:00');
+    if (isNaN(dt.getTime())) return '';
+    return new Intl.DateTimeFormat('fr-FR',{ weekday:'long', day:'numeric', month:'long', year:'numeric' }).format(dt);
+  }
+  function formatTimeFR(t){
+    if (!t) return '';
+    var parts = t.split(':');
+    var h = parseInt(parts[0],10), m = parseInt(parts[1],10) || 0;
+    if (isNaN(h)) return '';
+    return m === 0 ? (h + 'h') : (h + 'h' + String(m).padStart(2,'0'));
+  }
+  function formatCountdownFR(d){
+    if (!d) return '';
+    var target = new Date(d + 'T00:00:00');
+    if (isNaN(target.getTime())) return '';
+    var today = new Date(); today.setHours(0,0,0,0);
+    var diff = Math.round((target - today) / 86400000);
+    if (diff < 0) return '';
+    if (diff === 0) return "C'est aujourd'hui";
+    if (diff === 1) return "C'est demain";
+    return 'Dans ' + diff + ' jours';
+  }
+
+  /* ---------- render ask stage ---------- */
+  var askKicker = document.getElementById('askKicker');
+  if (content.to){
+    askKicker.textContent = 'Pour ' + content.to + ', avec tout mon coeur';
+    askKicker.hidden = false;
+  }
+
+  /* ---------- render accepted stage (filled now, shown later) ---------- */
+  document.getElementById('inviteMessage').textContent = content.message || DEFAULTS.message;
+
+  var inviteFrom = document.getElementById('inviteFrom');
+  if (content.from){
+    inviteFrom.textContent = 'Avec tout mon amour, ' + content.from;
+    inviteFrom.hidden = false;
+  }
+
+  var dateFR = formatDateFR(content.date);
+  var timeFR = formatTimeFR(content.time);
+  if (dateFR){
+    document.getElementById('inviteDate').textContent = dateFR;
+    document.getElementById('itemDate').hidden = false;
+  }
+  if (timeFR){
+    document.getElementById('inviteTime').textContent = timeFR;
+    document.getElementById('itemTime').hidden = false;
+  }
+  if (content.place){
+    document.getElementById('invitePlace').textContent = content.place;
+    document.getElementById('itemPlace').hidden = false;
+  }
+  var countdown = formatCountdownFR(content.date);
+  if (countdown){
+    var cd = document.getElementById('inviteCountdown');
+    cd.textContent = countdown;
+    cd.hidden = false;
+  }
+  document.getElementById('btnCalendar').hidden = !content.date;
+
+  /* ---------- ambient floating hearts ---------- */
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reduceMotion){
+    var ambient = document.getElementById('ambient');
+    var svgHeart = '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="currentColor"><path d="M12 21s-7.5-4.6-10-9.1C.5 8.6 2 4.8 5.6 4.1c2.1-.4 4 .6 5 2.3 1-1.7 2.9-2.7 5-2.3 3.6.7 5.1 4.5 3.6 7.8C19.5 16.4 12 21 12 21z"/></svg>';
+    for (var i = 0; i < 9; i++){
+      var el = document.createElement('div');
+      el.className = 'amb-heart';
+      el.innerHTML = svgHeart;
+      var size = 14 + Math.random() * 20;
+      el.style.width = size + 'px';
+      el.style.height = size + 'px';
+      el.style.left = (Math.random() * 96) + 'vw';
+      el.style.setProperty('--drift', (Math.random() * 60 - 30) + 'px');
+      el.style.animationDuration = (14 + Math.random() * 10) + 's';
+      el.style.animationDelay = (Math.random() * 14) + 's';
+      ambient.appendChild(el);
+    }
+  }
+
+  /* ---------- stage transitions ---------- */
+  var stageAsk = document.getElementById('stageAsk');
+  var stageAccepted = document.getElementById('stageAccepted');
+
+  function goToAccepted(){
+    stageAsk.hidden = true;
+    stageAccepted.hidden = false;
+    document.title = 'Elle a dit oui \uD83D\uDC95';
+    var h = document.getElementById('acceptedTitle');
+    h.focus();
+    burstHearts(28);
+  }
+
+  /* ---------- "Non" dodge mechanic ---------- */
+  var choiceRow = document.getElementById('choiceRow');
+  var btnOui = document.getElementById('btnOui');
+  var btnNon = document.getElementById('btnNon');
+  var dodgeCount = 0;
+  var phrases = ['Non','Tu es sure ?','Vraiment ?','Reflechis bien...','Allez...','S\'il te plait','Une derniere chance...','Aller, dis oui'];
+
+  function dodge(){
+    var rowRect = choiceRow.getBoundingClientRect();
+    var btnRect = btnNon.getBoundingClientRect();
+    var maxX = Math.max(0, rowRect.width - btnRect.width);
+    var maxY = Math.max(0, rowRect.height - btnRect.height);
+    var x = Math.random() * maxX;
+    var y = Math.random() * maxY;
+    btnNon.style.transform = 'translate(0,0)';
+    btnNon.style.left = x + 'px';
+    btnNon.style.top = y + 'px';
+    dodgeCount++;
+    btnNon.textContent = phrases[Math.min(dodgeCount, phrases.length - 1)];
+    var scale = Math.min(1.28, 1 + dodgeCount * 0.035);
+    btnOui.style.setProperty('--oui-scale', scale);
+  }
+
+  if (!reduceMotion){
+    choiceRow.addEventListener('pointermove', function(e){
+      var r = btnNon.getBoundingClientRect();
+      var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+      var dist = Math.hypot(e.clientX - cx, e.clientY - cy);
+      if (dist < 90) dodge();
+    });
+  }
+  btnNon.addEventListener('pointerdown', function(e){
+    e.preventDefault();
+    dodge();
+  });
+
+  btnOui.addEventListener('click', goToAccepted);
+
+  /* ---------- kiss cascade (existing feature, kept as a bonus) ---------- */
+  var sweetWords = [
+    "bisous mon bebe", "bisous mi vida", "bisous mon coeur", "bisous ma cherie",
+    "bisous mon amour", "bisous mon tresor", "bisous ma perle", "bisous mon ange",
+    "bisous mon soleil", "bisous ma reine", "bisous mon doudou", "bisous ma beaute",
+    "bisous ma douceur", "bisous mon etoile", "bisous my lady"
+  ];
+  var dropColors = ['#ff9ec7','#ff3366','#fdf2f6','#ff6f9e','#ffd1e6','#ffffff'];
+  var isRaining = false;
+
+  function createDrop(text){
+    var el = document.createElement('div');
+    el.className = 'word-drop';
+    el.textContent = text;
+    el.style.left = (Math.random() * 70 + 5) + 'vw';
+    el.style.color = dropColors[Math.floor(Math.random() * dropColors.length)];
+    el.style.fontSize = (Math.random() * 8 + 14) + 'px';
+    var duration = Math.random() * 3 + 3;
+    el.style.animationDuration = duration + 's';
+    document.body.appendChild(el);
+    setTimeout(function(){ el.remove(); }, duration * 1000);
+  }
+
+  function burstHearts(count){
+    if (reduceMotion){ return; }
+    var symbols = ['\uD83D\uDC95','\uD83D\uDC98','\u2728','\uD83C\uDF38','\uD83D\uDC96'];
+    for (var i = 0; i < count; i++){
+      setTimeout(function(){
+        createDrop(symbols[Math.floor(Math.random() * symbols.length)]);
+      }, i * 55);
+    }
+  }
+
+  document.getElementById('btnCascade').addEventListener('click', function(){
+    if (isRaining) return;
+    isRaining = true;
+    setInterval(function(){
+      createDrop(sweetWords[Math.floor(Math.random() * sweetWords.length)]);
+    }, 100);
+  });
+
+  /* ---------- add to calendar (.ics) ---------- */
+  function pad(n){ return String(n).padStart(2,'0'); }
+  function nowStampUTC(){
+    var d = new Date();
+    return d.getUTCFullYear() + pad(d.getUTCMonth()+1) + pad(d.getUTCDate()) + 'T' +
+           pad(d.getUTCHours()) + pad(d.getUTCMinutes()) + pad(d.getUTCSeconds()) + 'Z';
+  }
+  function escapeICS(s){ return String(s || '').replace(/\\/g,'\\\\').replace(/\n/g,'\\n').replace(/,/g,'\\,').replace(/;/g,'\\;'); }
+
+  document.getElementById('btnCalendar').addEventListener('click', function(){
+    if (!content.date) return;
+    var start = content.date.replace(/-/g,'') + 'T' + (content.time ? content.time.replace(':','') + '00' : '190000');
+    var title = 'Rendez-vous' + (content.to ? ' avec ' + content.to : '');
+    var lines = [
+      'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Demande//FR','BEGIN:VEVENT',
+      'UID:rdv-' + Date.now() + '@proposal',
+      'DTSTAMP:' + nowStampUTC(),
+      'DTSTART:' + start,
+      'SUMMARY:' + escapeICS(title),
+      'DESCRIPTION:' + escapeICS(content.message),
+      'LOCATION:' + escapeICS(content.place),
+      'END:VEVENT','END:VCALENDAR'
+    ];
+    var blob = new Blob([lines.join('\r\n')], { type:'text/calendar;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = 'rendez-vous.ics';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+  });
+
+  /* ============================================================
+     Admin: login + panel
+     ============================================================ */
+  var loginModal = document.getElementById('loginModal');
+  var adminModal = document.getElementById('adminModal');
+  var pinInput = document.getElementById('pinInput');
+  var pinError = document.getElementById('pinError');
+  var lastFocused = null;
+
+  function getPin(){
+    try{ return localStorage.getItem(PIN_KEY) || DEFAULT_PIN; }
+    catch(e){ return DEFAULT_PIN; }
+  }
+  function setPin(v){
+    try{ localStorage.setItem(PIN_KEY, v); }catch(e){}
+  }
+
+  function openModal(modal){
+    lastFocused = document.activeElement;
+    modal.hidden = false;
+    var focusable = modal.querySelector('input, button');
+    if (focusable) focusable.focus();
+    document.addEventListener('keydown', onModalKeydown);
+  }
+  function closeModal(modal){
+    modal.hidden = true;
+    document.removeEventListener('keydown', onModalKeydown);
+    if (lastFocused) lastFocused.focus();
+  }
+  function onModalKeydown(e){
+    var openOne = !loginModal.hidden ? loginModal : (!adminModal.hidden ? adminModal : null);
+    if (!openOne) return;
+    if (e.key === 'Escape'){ closeModal(openOne); return; }
+    if (e.key === 'Tab'){
+      var focusables = openOne.querySelectorAll('button, input, textarea, [tabindex]:not([tabindex="-1"])');
+      if (!focusables.length) return;
+      var first = focusables[0], last = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+    }
+  }
+
+  document.querySelectorAll('[data-close]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      closeModal(btn.closest('.modal-overlay'));
+    });
+  });
+  [loginModal, adminModal].forEach(function(overlay){
+    overlay.addEventListener('click', function(e){
+      if (e.target === overlay) closeModal(overlay);
+    });
+  });
+
+  document.getElementById('adminFab').addEventListener('click', function(){
+    pinInput.value = '';
+    pinError.hidden = true;
+    openModal(loginModal);
+  });
+
+  function tryPin(){
+    if (pinInput.value === getPin()){
+      closeModal(loginModal);
+      prefillAdminForm();
+      openModal(adminModal);
+    } else {
+      pinError.hidden = false;
+      pinInput.value = '';
+      pinInput.focus();
+      var m = document.querySelector('#loginModal .modal');
+      m.classList.remove('shake'); void m.offsetWidth; m.classList.add('shake');
+    }
+  }
+  document.getElementById('pinSubmit').addEventListener('click', tryPin);
+  pinInput.addEventListener('keydown', function(e){ if (e.key === 'Enter') tryPin(); });
+
+  /* ---------- admin form ---------- */
+  var fieldTo = document.getElementById('fieldTo');
+  var fieldFrom = document.getElementById('fieldFrom');
+  var fieldMessage = document.getElementById('fieldMessage');
+  var fieldDate = document.getElementById('fieldDate');
+  var fieldTime = document.getElementById('fieldTime');
+  var fieldPlace = document.getElementById('fieldPlace');
+  var linkOutput = document.getElementById('linkOutput');
+
+  function getDraft(){
+    try{
+      var raw = localStorage.getItem(DRAFT_KEY);
+      return raw ? JSON.parse(raw) : null;
+    }catch(e){ return null; }
+  }
+  function saveDraft(data){
+    try{ localStorage.setItem(DRAFT_KEY, JSON.stringify(data)); }catch(e){}
+  }
+
+  function prefillAdminForm(){
+    var draft = getDraft() || content;
+    fieldTo.value = draft.to || '';
+    fieldFrom.value = draft.from || '';
+    fieldMessage.value = draft.message || '';
+    fieldDate.value = draft.date || '';
+    fieldTime.value = draft.time || '';
+    fieldPlace.value = draft.place || '';
+    linkOutput.value = '';
+  }
+
+  function collectForm(){
+    return {
+      to: fieldTo.value.trim(),
+      from: fieldFrom.value.trim(),
+      message: fieldMessage.value.trim(),
+      date: fieldDate.value,
+      time: fieldTime.value,
+      place: fieldPlace.value.trim()
+    };
+  }
+
+  document.getElementById('btnGenerate').addEventListener('click', function(){
+    var data = collectForm();
+    saveDraft(data);
+    var encoded = encodeData(data);
+    var url = window.location.origin + window.location.pathname + '#d=' + encoded;
+    linkOutput.value = url;
+    linkOutput.focus();
+    linkOutput.select();
+  });
+
+  var toast = document.getElementById('toast');
+  var toastText = document.getElementById('toastText');
+  var toastTimer = null;
+  function showToast(msg){
+    toastText.textContent = msg;
+    toast.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toast.hidden = true; }, 2400);
+  }
+
+  document.getElementById('btnCopyLink').addEventListener('click', function(){
+    if (!linkOutput.value){ showToast('Genere le lien d\'abord.'); return; }
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(linkOutput.value).then(function(){
+        showToast('Lien copie !');
+      }).catch(fallbackCopy);
+    } else {
+      fallbackCopy();
+    }
+  });
+  function fallbackCopy(){
+    linkOutput.select();
+    try{
+      document.execCommand('copy');
+      showToast('Lien copie !');
+    }catch(e){
+      showToast('Copie manuellement le lien ci-dessus.');
+    }
+  }
+
+  /* ---------- pin change ---------- */
+  document.getElementById('btnSavePin').addEventListener('click', function(){
+    var a = document.getElementById('fieldNewPin').value;
+    var b = document.getElementById('fieldNewPinConfirm').value;
+    if (!/^\d{4}$/.test(a)){ showToast('Le code doit contenir 4 chiffres.'); return; }
+    if (a !== b){ showToast('Les deux codes ne correspondent pas.'); return; }
+    setPin(a);
+    document.getElementById('fieldNewPin').value = '';
+    document.getElementById('fieldNewPinConfirm').value = '';
+    showToast('Code mis a jour !');
+  });
+
+})();
+</script>
 </body>
 </html>
